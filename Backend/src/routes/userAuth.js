@@ -8,10 +8,12 @@ const adminMiddleware = require('../middleware/adminMiddleware');
 // Register
 authRouter.post('/register', register);
 authRouter.post('/login', login);
+authRouter.post('/google', googleLogin);
+
 authRouter.post('/logout', userMiddleware, logout);
 authRouter.post('/admin/register', adminMiddleware ,adminRegister);
 authRouter.delete('/profile', userMiddleware, deleteProfile);
-authRouter.post('/google', googleLogin);
+
 // authRouter.get('/getProfile',getProfile);
 authRouter.get('/check', userMiddleware, (req, res) => {
     
