@@ -4,8 +4,13 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, NavLink } from 'react-router';
-// Assuming clearError is also exported from authSlice like in the Login component
-import { registerUser, clearError } from '../authSlice'; 
+// ADDED: checkAuth to update Redux after Google sets the cookie
+import { registerUser, clearError, checkAuth } from '../authSlice'; 
+
+// --- ADDED GOOGLE IMPORTS ---
+import { GoogleLogin } from '@react-oauth/google';
+import axiosClient from '../utils/axiosClient';
+// ----------------------------
 
 const signupSchema = z.object({
   firstName: z.string().min(3, "Minimum character should be 3"),
@@ -17,7 +22,6 @@ function Signup() {
   const [showPassword, setShowPassword] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  // Added 'error' back in case the backend rejects the signup (e.g., email already exists)
   const { isAuthenticated, loading, error } = useSelector((state) => state.auth); 
 
   const {
@@ -39,6 +43,27 @@ function Signup() {
     dispatch(registerUser(data));
   };
 
+  // --- ADDED GOOGLE SUCCESS HANDLER ---
+  const handleGoogleSuccess = async (credentialResponse) => {
+    try {
+      // Send the Google token to your backend route
+      await axiosClient.post('user/google', {
+        token: credentialResponse.credential
+      });
+      
+      // Backend sets the httpOnly cookie, tell Redux to check auth status
+      await dispatch(checkAuth());
+      
+      // Redirect to the homepage
+      navigate('/');
+      
+    } catch (err) {
+      console.error('Google verification failed:', err);
+      alert('Failed to sign up with Google. Please try again.');
+    }
+  };
+  // ------------------------------------
+
   // Reusable custom input styles based on your theme
   const inputBaseStyle = "w-full bg-[#262626] border border-gray-600 rounded-lg px-4 py-3 text-gray-200 placeholder-gray-500 focus:outline-none focus:border-[#cbbda6] focus:ring-1 focus:ring-[#cbbda6] transition-colors";
   const labelStyle = "block text-sm font-medium text-gray-300 mb-1.5";
@@ -51,16 +76,6 @@ function Signup() {
         {/* Header / Logo */}
         <div className="flex flex-col items-center mb-8">
           <div className="flex items-center gap-3 mb-2">
-            {/* <svg 
-              xmlns="http://www.w3.org/2000/svg" 
-              className="h-8 w-8 text-[#cbbda6]" 
-              fill="none" 
-              viewBox="0 0 24 24" 
-              stroke="currentColor" 
-              strokeWidth={2.5}
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-            </svg> */}
             <h2 className="text-3xl font-bold text-white tracking-tight">
               leet<span className="text-[#cbbda6]">code</span>
             </h2>
@@ -160,6 +175,25 @@ function Signup() {
             </button>
           </div>
         </form>
+
+        {/* --- ADDED OR DIVIDER & GOOGLE BUTTON --- */}
+        <div className="flex items-center my-6">
+          <div className="flex-1 border-t border-gray-600"></div>
+          <span className="px-3 text-gray-400 text-sm">OR</span>
+          <div className="flex-1 border-t border-gray-600"></div>
+        </div>
+
+        <div className="flex justify-center">
+          <GoogleLogin
+            onSuccess={handleGoogleSuccess}
+            onError={() => console.error('Google Login Failed')}
+            theme="filled_black"
+            shape="rectangular"
+            text="signup_with"
+            size="large"
+          />
+        </div>
+        {/* ---------------------------------------- */}
 
         {/* Login Redirect */}
         <div className="text-center mt-8 pt-6 border-t border-gray-700/50">

@@ -3,10 +3,15 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, NavLink } from 'react-router'; 
-import { loginUser, clearError } from "../authSlice";
+// ADDED: checkAuth to update Redux after Google sets the cookie
+import { loginUser, clearError, checkAuth } from "../authSlice";
 import { useEffect, useState } from 'react';
 
-// IMPROVEMENT 1: Changed min(8) to min(1) for login specifically
+// --- ADDED GOOGLE IMPORTS ---
+import { GoogleLogin } from '@react-oauth/google';
+import axiosClient from '../utils/axiosClient';
+// ----------------------------
+
 const loginSchema = z.object({
   emailId: z.string().min(1, "Email is required").email("Invalid Email"),
   password: z.string().min(1, "Password is required") 
@@ -35,6 +40,27 @@ function Login() {
     dispatch(loginUser(data));
   };
 
+  // --- ADDED GOOGLE SUCCESS HANDLER ---
+  const handleGoogleSuccess = async (credentialResponse) => {
+    try {
+      // 1. Send the Google token to your backend route
+      await axiosClient.post('user/google', {
+        token: credentialResponse.credential
+      });
+      
+      // 2. Backend sets the httpOnly cookie, tell Redux to check the auth status
+      await dispatch(checkAuth());
+      
+      // 3. Redirect to the homepage
+      navigate('/');
+      
+    } catch (err) {
+      console.error('Google verification failed:', err);
+      alert('Failed to log in with Google. Please try again.');
+    }
+  };
+  // ------------------------------------
+
   // Reusable custom input styles based on your theme
   const inputBaseStyle = "w-full bg-[#262626] border border-gray-600 rounded-lg px-4 py-3 text-gray-200 placeholder-gray-500 focus:outline-none focus:border-[#cbbda6] focus:ring-1 focus:ring-[#cbbda6] transition-colors";
   const labelStyle = "block text-sm font-medium text-gray-300 mb-1.5";
@@ -47,16 +73,6 @@ function Login() {
         {/* Header / Logo */}
         <div className="flex flex-col items-center mb-8">
           <div className="flex items-center gap-3 mb-2">
-            {/* <svg 
-              xmlns="http://www.w3.org/2000/svg" 
-              className="h-8 w-8 text-[#cbbda6]" 
-              fill="none" 
-              viewBox="0 0 24 24" 
-              stroke="currentColor" 
-              strokeWidth={2.5}
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-            </svg> */}
             <h2 className="text-3xl font-bold text-white tracking-tight">
               leet<span className="text-[#cbbda6]">code</span>
             </h2>
@@ -64,7 +80,6 @@ function Login() {
           <p className="text-gray-400 text-sm">Welcome back! Please enter your details.</p>
         </div>
 
-        {/* IMPROVEMENT 2: Display the Redux error if the backend rejects the login! */}
         {typeof error === 'string' && error.trim() !== '' && (
           <div className="bg-red-500/10 border border-red-500/20 text-red-400 rounded-lg p-3 mb-6 flex items-center gap-3">
             <svg xmlns="http://www.w3.org/2000/svg" className="flex-shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -141,6 +156,25 @@ function Login() {
             </button>
           </div>
         </form>
+
+        {/* --- ADDED OR DIVIDER & GOOGLE BUTTON --- */}
+        <div className="flex items-center my-6">
+          <div className="flex-1 border-t border-gray-600"></div>
+          <span className="px-3 text-gray-400 text-sm">OR</span>
+          <div className="flex-1 border-t border-gray-600"></div>
+        </div>
+
+        <div className="flex justify-center">
+          <GoogleLogin
+            onSuccess={handleGoogleSuccess}
+            onError={() => console.error('Google Login Failed')}
+            theme="filled_black"
+            shape="rectangular"
+            text="continue_with"
+            size="large"
+          />
+        </div>
+        {/* ---------------------------------------- */}
 
         {/* Footer */}
         <div className="text-center mt-8 pt-6 border-t border-gray-700/50">

@@ -5,6 +5,9 @@ const bcrypt = require("bcrypt");
 const jwt = require('jsonwebtoken');
 const Submission = require("../models/Submission");
 
+const { OAuth2Client } = require('google-auth-library');
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
 
 const register = async (req,res)=>{
     
@@ -167,7 +170,71 @@ const deleteProfile = async(req, res) => {
     }
 }
 
+const googleLogin = async (req, res) => {
+    try {
+        const { token } = req.body;
+
+        if (!token) {
+            throw new Error("No token provided");
+        }
+
+        // 1. Verify the token with Google
+        const ticket = await client.verifyIdToken({
+            idToken: token,
+            audience: process.env.GOOGLE_CLIENT_ID,
+        });
+
+        // 2. Extract user data from the verified Google token
+        // Google uses 'email', 'given_name' (first name), 'picture' (avatar URL), and 'sub' (unique Google ID)
+        const { email, given_name, name, sub: googleId, picture } = ticket.getPayload();
+
+        // 3. Check if user already exists in your database using YOUR field name (emailId)
+        let user = await User.findOne({ emailId: email });
+
+        if (!user) {
+            // If they don't exist, create a new account automatically
+            user = await User.create({
+                firstName: given_name || name, // Fallback to full name if given_name is missing
+                emailId: email,
+                googleId: googleId,
+                avatar: picture,
+                role: 'user'
+                // Note: Make sure your User schema does NOT have `required: true` on password anymore!
+            });
+        }
+
+        // 4. Create the reply object matching your normal login
+        const reply = {
+            firstName: user.firstName,
+            emailId: user.emailId,
+            _id: user._id,
+            role: user.role,
+            avatar: user.avatar // Send avatar back if you want to display it on frontend
+        };
+
+        // 5. Generate YOUR app's standard JWT token (matching your existing logic)
+        const appToken = jwt.sign(
+            { _id: user._id, emailId: user.emailId, role: user.role },
+            process.env.JWT_KEY,
+            { expiresIn: 60 * 60 }
+        );
+
+        // 6. Set the cookie just like you do in standard login
+        res.cookie('token', appToken, {
+            maxAge: 60 * 60 * 1000,
+            httpOnly: true
+        });
+
+        res.status(200).json({
+            user: reply,
+            message: "Logged In with Google Successfully"
+        });
+
+    } catch (err) {
+        console.error("Google Auth Error:", err);
+        res.status(401).send("Error: Invalid Google Token");
+    }
+};
 
 
-
-module.exports = {register, login,logout, adminRegister , deleteProfile};  
+module.exports = {register, login,logout, adminRegister , deleteProfile , googleLogin};  
