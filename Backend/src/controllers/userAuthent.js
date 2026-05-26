@@ -241,11 +241,12 @@ const googleLogin = async (req, res) => {
         );
 
         // 6. Set the cookie just like you do in standard login
-        res.cookie('token', token, {
+        
+        res.cookie('token', appToken, { // <--- CHANGE THIS WORD
             maxAge: 60 * 60 * 1000,
             httpOnly: true,
-            secure: true,        // REQUIRED for live HTTPS sites
-            sameSite: 'none'     // REQUIRED for cross-domain cookies
+            secure: true,        
+            sameSite: 'none'     
         });
 
         res.status(200).json({
