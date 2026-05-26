@@ -12,7 +12,7 @@ const cors = require('cors');
 const videoRouter = require("./routes/videoCreator.js");
 
 app.use(cors({
-    origin: ['http://localhost:5173', 'http://localhost:5174'],
+    origin: "*" ,
     credentials :true 
 }))
 
