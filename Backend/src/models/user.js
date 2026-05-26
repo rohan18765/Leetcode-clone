@@ -43,8 +43,11 @@ const userSchema = new Schema({
     },
     password:{
         type:String,
-        required: true
-    }
+        required: false
+    },
+
+    googleId: { type: String, required: false },
+    avatar: { type: String, required: false }
 },{
     timestamps:true
 });
