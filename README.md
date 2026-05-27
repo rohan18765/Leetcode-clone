@@ -1,3 +1,4 @@
+
 # 🚀 LeetCode Clone Platform
 
 A full-stack algorithmic coding platform built with the MERN stack. This application allows users to solve coding challenges, execute code remotely in real-time, get AI-powered coding assistance, and manage their profiles securely.
@@ -19,7 +20,7 @@ For recruiters or guests who want to bypass the signup process to test the code 
 *(Replace the links below with actual screenshots of your project. You can drag and drop images directly into the GitHub text editor to generate links).*
 
 <div align="center">
-  <img src="link_to_your_dashboard_screenshot.png" alt="Dashboard View" width="800"/>
+  <img src="https://github.com/user-attachments/assets/06771041-f9f0-49f5-bcb7-535941fe65ac" alt="Dashboard View" width="800"/>
   <p><i>The main coding arena featuring real-time execution and AI chat support.</i></p>
 </div>
 
