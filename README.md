@@ -30,7 +30,7 @@ For recruiters or guests who want to bypass the signup process to test the code 
 </div>
 
 <div align="center">
-  <img src="link_to_your_admin_screenshot.png" alt="Admin View" width="800"/>
+  <img src="https://github.com/user-attachments/assets/f0ddfa46-af12-4b7c-8939-290dd68e444c" alt="Admin View" width="800"/>
   <p><i>Admin dashboard for managing problem sets.</i></p>
 </div>
 
