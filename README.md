@@ -41,6 +41,7 @@ For recruiters or guests who want to bypass the signup process to test the code 
 * **🤖 Integrated AI Assistant:** Built-in AI chat support to help users debug code, understand complex algorithms, and get hints without leaving the coding arena.
 * **⚡ Real-Time Code Execution:** Integrated with the Judge0 API to safely compile and run user submissions against test cases.
 * **🔒 Robust Authentication:** Secure JWT-based custom authentication alongside third-party Google OAuth integration.
+*  **🛡️ Advanced Security & Performance:** Integrated Redis for API rate limiting and secure JWT blacklisting (logout) to mitigate platform abuse and ensure optimal performance.
 * **🛡️ Production-Grade Security:** Implemented strict Cross-Origin Resource Sharing (CORS) and `httpOnly` cross-site cookies for secure session management.
 * **☁️ Split Architecture:** Decoupled client and server applications seamlessly communicating across distinct cloud environments (Vercel & Render).
 * **⚙️ Admin Dashboard:** Role-based access control allowing administrators to create, read, update, and delete coding problems.
@@ -56,7 +57,8 @@ For recruiters or guests who want to bypass the signup process to test the code 
 
 **Backend:**
 * Node.js & Express.js
-* MongoDB & Mongoose
+* MongoDB  & Mongoose
+* Redis (Rate Limiting & Session Management)
 * JSON Web Tokens (JWT) & Google Auth Library
 
 **Infrastructure & APIs:**
