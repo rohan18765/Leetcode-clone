@@ -17,10 +17,15 @@ For recruiters or guests who want to bypass the signup process to test the code 
 
 ## 📸 Platform Previews
 
-*(Replace the links below with actual screenshots of your project. You can drag and drop images directly into the GitHub text editor to generate links).*
 
 <div align="center">
   <img src="https://github.com/user-attachments/assets/06771041-f9f0-49f5-bcb7-535941fe65ac" alt="Dashboard View" width="800"/>
+  <p><i>This screenshot shows the homepage of my LeetCode  project, where users can view their problem list and track progress on solved challenges.</i></p>
+</div>
+
+
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/19e399e3-53a2-4a6b-855a-03aeaa9a4866" alt="Dashboard View" width="800"/>
   <p><i>The main coding arena featuring real-time execution and AI chat support.</i></p>
 </div>
 
