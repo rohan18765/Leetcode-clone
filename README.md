@@ -66,7 +66,7 @@ For recruiters or guests who want to bypass the signup process to test the code 
 * **Backend Hosting:** Render
 * **Database:** MongoDB Atlas
 * **Compiler API:** Judge0 (via RapidAPI)
-* **AI Integration:** OpenAI API / Gemini API *(Update this to match whichever AI provider you used)*
+* **AI Integration:**  Gemini API 
 
 ---
 
